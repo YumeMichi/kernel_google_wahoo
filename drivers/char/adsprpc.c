@@ -313,6 +313,7 @@ struct fastrpc_file {
 	int cid;
 	int ssrcount;
 	int pd;
+	int file_close;
 	struct fastrpc_apps *apps;
 	struct fastrpc_perf perf;
 	struct dentry *debugfs_file;
@@ -2463,6 +2464,9 @@ static int fastrpc_file_free(struct fastrpc_file *fl)
 
 	(void)fastrpc_release_current_dsp_process(fl);
 
+	spin_lock(&fl->hlock);
+	fl->file_close = 1;
+	spin_unlock(&fl->hlock);
 	if (!IS_ERR_OR_NULL(fl->init_mem))
 		fastrpc_buf_free(fl->init_mem, 0);
 	fastrpc_context_list_dtor(fl);
@@ -2889,6 +2893,14 @@ static long fastrpc_device_ioctl(struct file *file, unsigned int ioctl_num,
 
 	p.inv.fds = NULL;
 	p.inv.attrs = NULL;
+	spin_lock(&fl->hlock);
+	if (fl->file_close == 1) {
+		err = EBADF;
+		pr_warn("ADSPRPC: fastrpc_device_release is happening, So not sending any new requests to DSP");
+		spin_unlock(&fl->hlock);
+		goto bail;
+	}
+	spin_unlock(&fl->hlock);
 
 	switch (ioctl_num) {
 	case FASTRPC_IOCTL_INVOKE:
