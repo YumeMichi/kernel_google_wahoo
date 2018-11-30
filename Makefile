@@ -361,7 +361,7 @@ OBJCOPY		= $(CROSS_COMPILE)objcopy
 OBJDUMP		= $(CROSS_COMPILE)objdump
 STRIP		= $(CROSS_COMPILE)strip
 endif
-DTC		= scripts/dtc/dtc
+DTC		= scripts/dtc-aosp/dtc-aosp
 AWK		= awk
 GENKSYMS	= scripts/genksyms/genksyms
 INSTALLKERNEL  := installkernel
