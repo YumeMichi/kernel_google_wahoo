@@ -14,7 +14,7 @@ dtc-aosp-objs	+= dtc-lexer.lex.o dtc-parser.tab.o
 # We're working with a submodule, so make these all relative to that.
 dtc-aosp-objs	:= $(addprefix dtc/,$(dtc-aosp-objs))
 
-HOSTCFLAGS_DTC := -I$(src)/dtc -I$(src)/dtc/libfdt -I$(obj)/dtc
+HOSTCFLAGS_DTC := -I$(src)/dtc -I$(src)/dtc/libfdt -I$(obj)/dtc -DNO_YAML
 
 HOSTCFLAGS_checks.o := $(HOSTCFLAGS_DTC)
 HOSTCFLAGS_data.o := $(HOSTCFLAGS_DTC)
